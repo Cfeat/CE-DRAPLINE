@@ -49,5 +49,9 @@ CE 行事件接口参见 [Cheat Engine 官方 MemoryRecord 文档](https://wiki.
 
 ## 支持与赞助
 
+如果使用过程有什么问题，欢迎issues留言~
+
 开发不易，若您乐意，可以赞助一杯咖啡，谢谢喵QwQ
+
+<img width="1280" height="1744" alt="34639e7b9df9f4c0d2cf14b3533cf367" src="https://github.com/user-attachments/assets/d3c814f0-4291-4c56-bf01-c3eb1caf981b" />
 
