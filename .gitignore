@@ -1,0 +1,8 @@
+backup/
+save/
+.omo/
+.codegraph/
+__pycache__/
+release/
+*.tmp
+*.single.tmp

@@ -1,15 +1,20 @@
 -- DRAPLINE CE table v2.1. Compatible with the v2 game bridge.
 if drapCE and drapCE.stop then drapCE.stop() end
+if drapCE and drapCE.portable then drapCE.portable.dispose() end
 local D = { runtime = __RUNTIME__, active = false, state = {}, queue = {}, records = {}, editors = {}, seq = 0 }
 drapCE = D
 local list = getAddressList()
-local function path(name) return D.runtime .. '\\' .. name end
+local function path(name) return D.runtime and (D.runtime .. '\\' .. name) end
 local function readfile(name)
+  if not D.runtime then return nil end
+  if D.portable then return D.portable.read(path(name)) end
   local f = io.open(path(name), 'rb')
   if not f then return nil end
   local text = f:read('*a'); f:close(); return text
 end
 local function writefile(name, text)
+  if not D.runtime then return false,'请先选择游戏。' end
+  if D.portable then return D.portable.write(path(name),text) end
   local target = path(name)
   local temporary = target .. '.ce.tmp'
   local f, err = io.open(temporary, 'wb')
@@ -87,6 +92,7 @@ end
 function D.start()
   if D.active then return end
   if not refresh() then
+    if D.portable then D.portable.connect(); return end
     error('未找到运行中的游戏桥接。先运行 Install.ps1 安装，再重启游戏。')
   end
   D.client = tostring(os.time()) .. '_' .. tostring(getTickCount())
@@ -105,6 +111,8 @@ function D.stop()
     writefile('heartbeat.txt', '')
   end
   D.active = false; D.queue = {}; D.pending = nil
+  local connection=list.getMemoryRecordByID(10)
+  if connection then pcall(function() connection.disableWithoutExecute() end) end
   for _, editor in pairs(D.editors) do pcall(function() editor.form.destroy() end) end
   D.editors = {}
   for _, item in pairs(D.records) do pcall(function() item.record.disableWithoutExecute() end) end

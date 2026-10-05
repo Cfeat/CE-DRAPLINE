@@ -14,7 +14,7 @@ export async function installDraplineCE(window) {
   let available = false, busy = false, lastToken = '', ackClient = '', ackSeq = 0, lastError = '';
   const statusPath = join(runtime, 'status.tsv');
   const publish = async snapshot => {
-    const status = { protocol: 1, pid: process.pid, server, time: Date.now(), client: ackClient, seq: ackSeq, ...snapshot };
+    const status = { protocol: 1, pid: process.pid, server, time: Date.now(), game_root: gameRoot, client: ackClient, seq: ackSeq, ...snapshot };
     const text = Object.entries(status).map(([k,v]) => `${k}\t${String(v ?? '').replace(/[\r\n\t]/g, ' ')}`).join('\n') + '\n';
     const tmp = statusPath + `.${process.pid}.tmp`;
     await writeFile(tmp, text, 'utf8');
@@ -48,7 +48,7 @@ export async function installDraplineCE(window) {
       try {
         const raw = await readFile(join(runtime, 'request.tsv'), 'utf8');
         const p = raw.trim().split('\t');
-        if (lease && p.length === 5 && p[0] === client && raw !== lastToken && /^\d+$/.test(p[1])) {
+        if (lease && raw.endsWith('\n') && p.length === 5 && p[0] === client && raw !== lastToken && /^\d+$/.test(p[1])) {
           request = { op: p[2], key: p[3], value: Number(p[4]) };
           lastToken = raw; ackClient = client; ackSeq = Number(p[1]);
         }
